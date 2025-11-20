@@ -28,6 +28,7 @@ on:
       - '**.kicad_sch'
       - '**.kicad_pcb'
       - 'config.kibot.yaml'
+  workflow_dispatch:
 
 jobs:
   pcb:
