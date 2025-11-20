@@ -9,12 +9,16 @@ Automatically generate KiCad fabrication outputs using [KiBot](https://github.co
 - Produces interactive HTML documentation
 - Deploys results to GitHub Pages
 
-## Configuration
+## Setup
 
-The action uses a default `config.kibot.yaml` that generates common outputs. To customize:
-
-1. Add your own `config.kibot.yaml` to your repository root
-2. The action will automatically use your config instead of the default
+1. Add your own `config.kibot.yaml` to your repository root, otherwise action defaults to [this one](https://github.com/Nautilus-UUV/nautilus-kibot-action/blob/main/config.kibot.yaml).
+2. Enable GitHub Pages:
+  1. **Make your repository public** (required for free GitHub Pages)
+  2. Go to **Settings > Pages** in your repository
+  3. Set **Source** to "Deploy from a branch"
+  4. Run workflow
+  5. Select **Branch: gh-pages** and **/ (root)**
+  6. Click **Save**
 
 ## Example Workflow
 
@@ -39,23 +43,13 @@ jobs:
     - uses: Nautilus-UUV/nautilus-kibot-action@main
 ```
 
-### With custom config:
+### Customise options:
 ```yaml
     - uses: Nautilus-UUV/nautilus-kibot-action@main
       with:
-        config-path: 'config.kibot.yaml'
+        config-path: 'config.kibot.yaml' # defaults to ''
+        deploy-to-pages: 'false' # defaults to 'true'
+        pages-branch: 'website' # defaults to 'gh-pages'
 ```
 
-Results are uploaded as artifacts. The action also works with GitHub Pages deployment.
-
-## GitHub Pages Setup
-
-To deploy results to GitHub Pages:
-
-1. **Make your repository public** (required for free GitHub Pages)
-2. Go to **Settings > Pages** in your repository
-3. Set **Source** to "Deploy from a branch"
-4. Select **Branch: gh-pages** and **/ (root)**
-5. Click **Save**
-
-The action will automatically deploy to GitHub Pages when you push to the main branch.
+Results are uploaded as artifacts and automatically deployed to GitHub Pages by default.

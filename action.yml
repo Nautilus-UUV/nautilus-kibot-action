@@ -1,12 +1,20 @@
 name: 'KiBot PCB Manufacturing Files'
 description: 'Generate PCB manufacturing files and documentation using KiBot'
-author: 'nmassari'
+author: 'massarin'
 
 inputs:
   config-path:
     description: 'Path to KiBot configuration file (defaults to config.kibot.yaml in repo root or action default)'
     required: false
     default: ''
+  deploy-to-pages:
+    description: 'Deploy generated files to GitHub Pages'
+    required: false
+    default: 'true'
+  pages-branch:
+    description: 'Branch to deploy to for GitHub Pages'
+    required: false
+    default: 'gh-pages'
 
 outputs:
   artifacts-path:
@@ -63,3 +71,16 @@ runs:
       with:
         name: KiBot-outputs
         path: Generated
+
+    - name: Disable Jekyll for GitHub Pages
+      if: ${{ inputs.deploy-to-pages == 'true' }}
+      run: |
+        touch Generated/.nojekyll
+      shell: bash
+
+    - name: Deploy to GitHub Pages
+      if: ${{ inputs.deploy-to-pages == 'true' }}
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        branch: ${{ inputs.pages-branch }}
+        folder: Generated
