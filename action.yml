@@ -1,0 +1,55 @@
+name: 'KiBot PCB Manufacturing Files'
+description: 'Generate PCB manufacturing files and documentation using KiBot'
+author: 'nmassari'
+
+inputs:
+  config-path:
+    description: 'Path to KiBot configuration file (defaults to config.kibot.yaml in repo root or action default)'
+    required: false
+    default: ''
+
+outputs:
+  artifacts-path:
+    description: 'Path to generated artifacts'
+    value: 'Generated'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Generate outputs with KiBot
+      run: |
+        if [ -n "${{ inputs.config-path }}" ]; then
+          echo "Using specified config: ${{ inputs.config-path }}"
+          kibot -c "${{ inputs.config-path }}"
+        elif [ -f config.kibot.yaml ]; then
+          echo "Using user's config.kibot.yaml"
+          kibot -c config.kibot.yaml
+        else
+          echo "Using default config from action"
+          kibot -c ${{ github.action_path }}/config.kibot.yaml
+        fi
+      shell: bash
+
+    - name: Create root index
+      run: |
+        NAVIGATE_FILE=$(ls Generated/Browse/*-navigate.html 2>/dev/null | head -n1)
+        if [ -n "$NAVIGATE_FILE" ]; then
+          NAVIGATE_FILENAME=$(basename "$NAVIGATE_FILE")
+          cat > Generated/index.html << EOF
+        <html>
+        <head>
+        <meta http-equiv="refresh" content="0; Browse/$NAVIGATE_FILENAME"/>
+        </head>
+        </html>
+        EOF
+          echo "Created index.html redirecting to Browse/$NAVIGATE_FILENAME"
+        else
+          echo "No navigate.html file found"
+        fi
+      shell: bash
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: KiBot-outputs
+        path: Generated
