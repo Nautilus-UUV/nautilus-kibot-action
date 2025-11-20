@@ -78,7 +78,13 @@ runs:
         touch Generated/.nojekyll
       shell: bash
 
-    - name: Deploy to GitHub Pages
+    - name: Install rsync
+      if: ${{ inputs.deploy-to-pages == 'true' }}
+      run: |
+        apt-get update && apt-get install -y rsync
+      shell: bash
+
+    - name: Deploy
       if: ${{ inputs.deploy-to-pages == 'true' }}
       uses: JamesIves/github-pages-deploy-action@v4
       with:
