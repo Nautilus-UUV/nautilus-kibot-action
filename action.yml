@@ -26,7 +26,17 @@ runs:
           kibot -c config.kibot.yaml
         else
           echo "Using default config from action"
-          kibot -c ${{ github.action_path }}/config.kibot.yaml
+          # Use environment variable instead of github.action_path for better container compatibility
+          DEFAULT_CONFIG="${GITHUB_ACTION_PATH}/config.kibot.yaml"
+          if [ -f "$DEFAULT_CONFIG" ]; then
+            kibot -c "$DEFAULT_CONFIG"
+          else
+            echo "ERROR: Default config not found at $DEFAULT_CONFIG"
+            echo "Action path: $GITHUB_ACTION_PATH"
+            echo "Available files in action:"
+            ls -la "$GITHUB_ACTION_PATH" 2>/dev/null || echo "Cannot list action directory"
+            exit 1
+          fi
         fi
       shell: bash
 

@@ -18,6 +18,8 @@ The action uses a default `config.kibot.yaml` that generates common outputs. To 
 
 ## Example Workflow
 
+Add this workflow to `.github/workflows/kibot.yml`:
+
 ```yaml
 name: KiBot
 on:
